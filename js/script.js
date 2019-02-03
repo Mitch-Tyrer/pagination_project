@@ -18,7 +18,7 @@ FSJS project 2 - List Filter and Pagination
 ***/
 const list = document.querySelectorAll('.student-item');
 const itemsPerPage = 10;
-const totalPages = list.length/itemsPerPage;
+
 
 
 
@@ -46,7 +46,37 @@ const showPage = (arr, page) => {
    functionality to the pagination buttons.
 ***/
 
-
+const addPageLinks = (list) => {
+   // display totalPages
+      const totalPages = list.length/itemsPerPage;
+   // create div element with class of pagination and append to the .page div
+      let pageDiv = document.querySelector('.page');
+      let linkDiv = document.createElement('div');
+      linkDiv.className = 'pagination';
+      pageDiv.appendChild(linkDiv)
+   // create a ul and append to the pagination div
+      let linksUL = document.createElement('ul');
+      linkDiv.appendChild(linksUL);
+   // iterate through totalPages and append a li w/ an a tag with page number
+      for(let i = 0; i < totalPages; i++){
+         let li = document.createElement('li');
+         li.innerHTML = `<a href="#"> ${i + 1} </a>`;
+         linksUL.appendChild(li);
+      }
+   
+   // add click listener to a tags 
+         let pages = document.querySelectorAll('a');
+         linksUL.addEventListener('click', (e) => {
+            // loop over the links and remove active class
+            for(let i = 0; i < pages.length; i++){
+               pages.className = '';
+               // add active class to event target (link that was clicked)
+            }
+         
+         // call the show page passing in the event target as the pagenumber
+      });
+}
+ 
 
 
 
