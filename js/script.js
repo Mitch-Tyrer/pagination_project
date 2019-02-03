@@ -18,6 +18,7 @@ FSJS project 2 - List Filter and Pagination
 ***/
 const list = document.querySelectorAll('.student-item');
 const itemsPerPage = 10;
+let curPage = 1;
 
 
 
@@ -66,16 +67,22 @@ const addPageLinks = (list) => {
    
    // add click listener to a tags 
          let pages = document.querySelectorAll('a');
+         pages[curPage - 1].className = 'active';
          linksUL.addEventListener('click', (e) => {
             // loop over the links and remove active class
             for(let i = 0; i < pages.length; i++){
-               pages.className = '';
+               pages[i].className = '';
                // add active class to event target (link that was clicked)
+               e.target.className = 'active';
             }
-         
-         // call the show page passing in the event target as the pagenumber
+               // call the show page passing in the event target as the pagenumber
+               curPage = e.target.textContent;
+               showPage(list, curPage);
       });
 }
+
+showPage(list, curPage);
+addPageLinks(list);
  
 
 
