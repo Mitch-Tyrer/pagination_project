@@ -6,20 +6,17 @@ FSJS project 2 - List Filter and Pagination
 // Study guide for this project - https://drive.google.com/file/d/1OD1diUsTMdpfMDv677TfL1xO2CEkykSz/view?usp=sharing
 
 
-/*** 
-   Add your global variables that store the DOM elements you will 
-   need to reference and/or manipulate. 
-   
-   But be mindful of which variables should be global and which 
-   should be locally scoped to one of the two main functions you're 
-   going to create. A good general rule of thumb is if the variable 
-   will only be used inside of a function, then it can be locally 
-   scoped to that function.
-***/
-const list = document.querySelectorAll('.student-item');
+//Global Variables
+const ul = document.querySelector('.student-list');
+const list = ul.children;
 const itemsPerPage = 10;
 let curPage = 1;
 
+// no results page
+const noResults = document.createElement('li');
+noResults.textContent = 'No results found...';
+ul.appendChild(noResults);
+noResults.style.display = 'none';
 
 
 
@@ -40,16 +37,52 @@ const showPage = (arr, page) => {
    }
 }
 
+// delete page links
+const deleteLinks = () => {
+   let links = document.querySelector('.pagination');
+   ul.parentNode.removeChild(links);
+}
+
+//fucntion to add a search field to the DOM
+const searchBar = () => {
+   //insert the input field to the header div
+   const header = document.querySelector('.page-header')
+   const searchForm = document.createElement('form');
+   const searchBar = document.createElement('input');
+   searchForm.className = 'page-header student-search';
+   searchBar.type = 'text';
+   searchBar.placeholder = 'Search for Students';
+   searchForm.appendChild(searchBar);
+   header.appendChild(searchForm);
+   //create a varible to find the text content of the student details h3 element
+   const names = document.querySelectorAll('.student-details > h3');     
+   // add key up event listener to begin filtering on each keystroke
+   searchForm.addEventListener('keyup', (e) => {
+      //retreive user input
+      const userInput = e.target.value.toLowerCase();
+      //iterate over the node list and compare inputed value to text content of lists h3
+      for(let i = 0; i < names.length; i++){
+         names[i].textContent.toLowerCase();
+         
+      // if statement to filter each name based on user input
+         if(names[i].textContent.indexOf(userInput) !== -1){
+            list[i].style.display = 'block';
+         } else {
+            list[i].style.display = 'none';
+         } 
+
+      }
+  
+   });
+}
 
 
-/*** 
-   Create the `appendPageLinks function` to generate, append, and add 
-   functionality to the pagination buttons.
-***/
 
-const addPageLinks = (list) => {
+// JavaScript to add to make links to pages
+
+const addPageLinks = (list, numPages) => {
    // display totalPages
-      const totalPages = list.length/itemsPerPage;
+      const totalPages = numPages/itemsPerPage;
    // create div element with class of pagination and append to the .page div
       let pageDiv = document.querySelector('.page');
       let linkDiv = document.createElement('div');
@@ -81,8 +114,9 @@ const addPageLinks = (list) => {
       });
 }
 
+searchBar();
 showPage(list, curPage);
-addPageLinks(list);
+addPageLinks(list, list.length);
  
 
 
