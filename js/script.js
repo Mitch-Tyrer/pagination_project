@@ -12,6 +12,13 @@ const perPage = 10;
 let curPage = 1;
 let totalPages = studentList.length / perPage;
 
+// No Results LI
+const noRes = document.createElement('li');
+noRes.textContent = 'No results found...';
+noRes.style.display = 'none';
+studentUL.appendChild(noRes);
+
+
 // function to show the the page based on the total items per page
 const showPage = (list, pageNum) => {
    //find indexes of first and last element
@@ -26,10 +33,15 @@ const showPage = (list, pageNum) => {
          list[i].style.display = 'block';
       }
    }
+   if(list.length === 0){
+      noRes.style.display = 'block'
+   } else {
+      noRes.style.display = 'none';
+   }
 }
 
 //Function to append links to the bottom of the page based on number of items in the list
-const addPageLinks = () => {
+const addPageLinks = (list) => {
    // create a div element class pagination, append to page div
    let pageDiv = document.querySelector('.page');
    let linkDiv = document.createElement('div');
@@ -39,26 +51,38 @@ const addPageLinks = () => {
    let linksUL = document.createElement('ul');
    linkDiv.appendChild(linksUL);
    //iterate for every page and add an li w/ a tags containing page number
-   for(let i = 0; i < totalPages; i++){
+   for (let i = 0; i < totalPages; i++) {
       let li = document.createElement('li');
       li.innerHTML = `<a href="#"> ${i + 1} </a>`;
       linksUL.appendChild(li);
    }
    let page = document.querySelectorAll('.pagination > ul > li > a');
-   page[curPage -1].className = 'active';
+   if(totalPages > 2){
+      page[curPage -1].className = 'active';
+   } else {
+      page[0].className ='active';
+   }
    // add a click listener to each a tag that calls show page with appropriate page
    linksUL.addEventListener('click', (e) => {
       // iterate through links and remove active class
-      for(let i = 0; i < page.length; i++){
+      for (let i = 0; i < page.length; i++) {
          page[i].className = '';
          // add active class to event target link
          e.target.className = 'active';
       }
       //update current page number and call the show function
       curPage = e.target.textContent
-      showPage(studentList, curPage);
+      showPage(list, curPage);
 
-   });  
+   });
+}
+
+// function to delete page links
+const deletePageLinks = () => {
+   // declare links div
+   const linkDiv = document.querySelector('.pagination')
+   // remove them from the parent node
+   linkDiv.parentNode.removeChild(linkDiv);
 }
 
 // function to append a search bar to top of page
@@ -68,46 +92,50 @@ const searchBar = () => {
    //create form element with inputs
    let form = document.createElement('form');
    let search = document.createElement('input');
-   let button = document.createElement('button');
    // add classes and types then append to form element
-   button.type = 'submit';
-   button.textContent = 'Search';
    search.type = 'text';
-   search.placeholder = 'Search for Students';
+   search.placeholder = 'Filter Students';
    form.className = 'page-header student-search';
    form.appendChild(search);
-   form.appendChild(button);
    //append to header
    header.appendChild(form);
 
-         // Event Listener for search functionality
-         form.addEventListener('keyup', (e) => {
-            //varible to target names
-            const students = document.querySelectorAll('.student-details > h3');
-            // find user input
-            const userInput = e.target.value.toLowerCase();
+   // Event Listener for search functionality
+   form.addEventListener('keyup', (e) => {
+      //reset current page
+      curPage = 1;
+      //varible to target names
+      const students = document.querySelectorAll('.student-details > h3');
+      // find user input
+      const userInput = e.target.value.toLowerCase();
+      // new array to push displayed items
+      let filtered = [];
+      //iterate over the node list, compare input to names in students text content
+      for (let i = 0; i < students.length; i++) {
+         // convert to lowercase
+         students[i].textContent.toLowerCase();
+         // conditional to display names that match
+         if (students[i].textContent.indexOf(userInput) !== -1) {
+            filtered.push(studentList[i]);
+         } else {
+            studentList[i].style.display = 'none';
+         }
+      }
+      deletePageLinks();
+      totalPages = filtered.length / perPage;
+      showPage(filtered, curPage);
+      addPageLinks(filtered);
+   });
+   form.addEventListener('submit', (e) => {
 
-            //iterate over the node list, compare input to names in students text content
-            for(let i = 0; i < students.length; i++){
-               // convert to lowercase
-               students[i].textContent.toLowerCase();
-
-               // conditional to display names that match
-               if(students[i].textContent.indexOf(userInput) !== -1){
-                  studentList[i].style.display = 'block';
-               } else {
-                  studentList[i].style.display = 'none';
-               }
-            }
-         
-         })
+   });
 }
 
 
 
 //initial call on load of page
 showPage(studentList, curPage);
-addPageLinks();
+addPageLinks(studentList);
 searchBar();
 
 
