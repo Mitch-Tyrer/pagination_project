@@ -12,11 +12,17 @@ const perPage = 10;
 let curPage = 1;
 let totalPages = studentList.length / perPage;
 
+//create element function
+const newElement = (type, parent) => {
+   let el = document.createElement(type);
+   parent.appendChild(el);
+   return el;
+}
+
 // No Results LI
-const noRes = document.createElement('li');
+const noRes = newElement('li', studentUL)
 noRes.textContent = 'No results found...';
 noRes.style.display = 'none';
-studentUL.appendChild(noRes);
 
 
 // function to show the the page based on the total items per page
@@ -40,21 +46,20 @@ const showPage = (list, pageNum) => {
    }
 }
 
+
+
 //Function to append links to the bottom of the page based on number of items in the list
 const addPageLinks = (list) => {
    // create a div element class pagination, append to page div
    let pageDiv = document.querySelector('.page');
-   let linkDiv = document.createElement('div');
+   let linkDiv = newElement('div', pageDiv);
    linkDiv.className = 'pagination';
-   pageDiv.appendChild(linkDiv)
    // Add ul to div
-   let linksUL = document.createElement('ul');
-   linkDiv.appendChild(linksUL);
+   let linksUL = newElement('ul', linkDiv)
    //iterate for every page and add an li w/ a tags containing page number
    for (let i = 0; i < totalPages; i++) {
-      let li = document.createElement('li');
+      let li = newElement('li', linksUL);
       li.innerHTML = `<a href="#"> ${i + 1} </a>`;
-      linksUL.appendChild(li);
    }
    let page = document.querySelectorAll('.pagination > ul > li > a');
    if(totalPages > 2){
@@ -90,15 +95,13 @@ const searchBar = () => {
    //declare variable to append to the header
    let header = document.querySelector('.page-header');
    //create form element with inputs
-   let form = document.createElement('form');
-   let search = document.createElement('input');
+   let form = newElement('form', header);
+   let search = newElement('input', form);
    // add classes and types then append to form element
    search.type = 'text';
    search.placeholder = 'Filter Students';
    form.className = 'page-header student-search';
-   form.appendChild(search);
    //append to header
-   header.appendChild(form);
 
    // Event Listener for search functionality
    form.addEventListener('keyup', (e) => {
@@ -126,9 +129,6 @@ const searchBar = () => {
       showPage(filtered, curPage);
       addPageLinks(filtered);
    });
-   form.addEventListener('submit', (e) => {
-
-   });
 }
 
 
@@ -140,4 +140,3 @@ searchBar();
 
 
 
-// Remember to delete the comments that came with this file, and replace them with your own code comments.
